@@ -13,18 +13,58 @@ document.addEventListener('DOMContentLoaded', function() {
   const inputAsunto = document.querySelector("#asunto");
   const inputMensaje = document.querySelector("#mensaje");
   const formulario = document.querySelector("#formulario");
-  const btnSumit = document.querySelector('#formulario button[type="submit"]'); //En esta variable estamos utilizando un Selector de CSS
+  const btnSumit = document.querySelector('#formulario button[type="submit"]');
+  const btnReset = document.querySelector('#formulario button[type="reset"]');
+  const spinner = document.querySelector("#spinner");
 
   //console.log(inputMensaje)
 
   //Asignar eventos de la interfaz
-  inputEmail.addEventListener('input', validar);
-  inputAsunto.addEventListener('input', validar);
-  inputMensaje.addEventListener('input', validar);
+  inputEmail.addEventListener("input", validar);
+  inputAsunto.addEventListener("input", validar);
+  inputMensaje.addEventListener("input", validar);
+  formulario.addEventListener("submit", enviarEmail);
+  //Crear un evento callback para el boton reset
+  btnReset.addEventListener("click", function (e) {
+    e.preventDefault();
+    resetFormulario();
+  });
+
+  function enviarEmail(e) {
+    e.preventDefault();
+    spinner.classList.add("flex");
+    spinner.classList.remove("hidden");
+
+    setTimeout(function () {
+      spinner.classList.remove("flex");
+      spinner.classList.add("hidden");
+      resetFormulario();
+
+      // Crear una alerta
+      const alertaExito = document.createElement("P");
+      alertaExito.classList.add(
+        "bg-green-500",
+        "text-white",
+        "p-2",
+        "text-center",
+        "rounded-lg",
+        "mt-10",
+        "fold-bold",
+        "text-sm",
+        "uppercase"
+      );
+
+      alertaExito.textContent = "Mensaje enviado correctamente";
+      formulario.appendChild(alertaExito);
+      setTimeout(() => {
+        alertaExito.remove();
+      }, 3000);
+    }, 3000);
+  }
 
   function validar(e) {
     //console.log(e.target.parentElement);
-    if (e.target.value.trim() === "") {
+    if (e.target.value.trim() === "" || e.target.value.length < 5) {
       mostrarAlerta(
         `El campo ${e.target.id} es obligatorio`,
         e.target.parentElement
@@ -80,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function comprobarDatos() {
-    console.log(datos);
+    //console.log(datos);
     if (Object.values(datos).includes("")) {
       btnSumit.classList.add("opacity-50");
       btnSumit.disabled = true;
@@ -88,6 +128,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     btnSumit.classList.remove("opacity-50");
     btnSumit.disabled = false;
+  }
+
+  function resetFormulario() {
+    datos.email = "";
+    datos.asunto = "";
+    datos.mensaje = "";
+    formulario.reset();
+    comprobarDatos();
   }
 });
 
